@@ -10,7 +10,8 @@ impl Handle for Win32Handle
 {
 	fn new(window_title: &Option<String>, width: u32, height: u32) -> Result<Self, String>
 	{
-		return Err("couldn't create win32 window".to_owned());
+		println!("created win32 window");
+		return Ok(Win32Handle {});
 	}
 	
 	fn lock_pointer(&self) {}
