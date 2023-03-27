@@ -18,25 +18,21 @@ pub mod window_handle
 
 pub mod event;
 
-pub struct Window
+pub struct WindowBuilder
 {
-	handle: Option<Box<WindowHandle>>,
-	title: Option<String>,
+	pub title: Option<String>,
 	pub width: u32,
 	pub height: u32,
-	pub is_focused: bool,
 }
 
-impl Window
+impl WindowBuilder
 {
 	pub fn new() -> Self
 	{
-		return Window { 
-			handle: None,
+		return Self {
 			title: None,
 			width: 150,
 			height: 150,
-			is_focused: true
 		}
 	}
 
@@ -54,10 +50,8 @@ impl Window
 		self
 	}
 
-	pub fn build(mut self) -> Result<Self, String>
+	pub fn build(self) -> Result<WindowHandle, String>
 	{
-		self.handle = Some(Box::new(WindowHandle::new(&self.title, self.width, self.height)?));
-
-		Ok(self)
+		Ok(WindowHandle::new(&self.title, self.width, self.height)?)
 	}
 }
