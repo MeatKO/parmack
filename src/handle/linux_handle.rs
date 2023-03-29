@@ -30,7 +30,11 @@ impl Drop for LinuxHandle
 {
 	fn drop(&mut self) 
 	{ 
-		todo!() 
+		unsafe
+		{
+			xcb_destroy_window(self.xcb_conn, self.xcb_window);
+			self.xcb_conn = nullptr();
+		}
 	}
 }
 

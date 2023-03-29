@@ -1,29 +1,29 @@
-use crate::handle::Handle;
-
-use self::window_handle::WindowHandle;
-
 #[cfg(target_os = "linux")]
 pub mod window_handle 
 {
-	pub use crate::handle::linux_handle::*;
+	use crate::handle::linux_handle::*;
 	pub type WindowHandle = LinuxHandle;
 }
 
 #[cfg(target_os = "windows")]
 pub mod window_handle
 {
-	pub use crate::handle::win32_handle::*;
+	use crate::handle::win32_handle::*;
 	pub type WindowHandle = Win32Handle;
 }
 
 pub mod event;
 pub mod consts;
 
+use crate::handle::Handle;
+
+use self::window_handle::WindowHandle;
+
 pub struct WindowBuilder
 {
-	pub title: Option<String>,
-	pub width: u32,
-	pub height: u32,
+	title: Option<String>,
+	width: u32,
+	height: u32,
 }
 
 impl WindowBuilder

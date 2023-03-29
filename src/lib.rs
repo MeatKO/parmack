@@ -1,5 +1,5 @@
 pub mod window;
-mod handle;
+pub mod handle;
 
 #[cfg(all(not(target_os = "windows"), not(target_os = "linux")))] 
 pub fn unsupported_target_os()

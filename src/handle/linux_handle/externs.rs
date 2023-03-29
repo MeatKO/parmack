@@ -73,4 +73,6 @@ extern "C"
     pub fn xcb_unmap_window(c: *mut xcb_connection_t, window: xcb_window_t) -> xcb_void_cookie_t;
 
 	pub fn xcb_flush(c: *mut xcb_connection_t) -> ::std::os::raw::c_int;
+
+	pub fn xcb_destroy_window(c: *mut xcb_connection_t, window: xcb_window_t) -> xcb_void_cookie_t;
 }
