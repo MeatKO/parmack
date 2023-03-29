@@ -17,6 +17,7 @@ pub mod window_handle
 }
 
 pub mod event;
+pub mod consts;
 
 pub struct WindowBuilder
 {
@@ -36,8 +37,7 @@ impl WindowBuilder
 		}
 	}
 
-	pub fn with_title<T>(mut self, title: T) -> Self
-	where T: ToString
+	pub fn with_title<T: ToString>(mut self, title: T) -> Self
 	{
 		self.title = Some(title.to_string());
 		self

@@ -3,8 +3,8 @@ pub enum WindowEvent
 {
 	KeyPress(KeyCode),
 	KeyRelease(KeyCode),
-	MousePress(MouseCode),
-	MouseRelease(MouseCode),
+	MousePress(MouseCode, u32, u32),
+	MouseRelease(MouseCode, u32, u32),
 	WindowAction(WindowActions)
 }
 
@@ -16,11 +16,11 @@ pub enum WindowActions
 	Close,
 	Minimize,
 	Maximize,
-	Resize,
+	Resize{ width: i32, height: i32 },
 	FocusOut,
 	FocusIn,
-	Motion(i32, i32),
-	Configure(i32, i32),
+	Motion{ x: i32, y: i32 },
+	Configure{ width: i32, height: i32 },
 }
 
 #[derive(Debug)]
