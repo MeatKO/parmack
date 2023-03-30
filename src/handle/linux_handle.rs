@@ -1,9 +1,9 @@
-mod types;
-mod enums;
-mod structs;
-mod externs;
-mod functions;
-mod consts;
+pub mod types;
+pub mod enums;
+pub mod structs;
+pub mod externs;
+pub mod functions;
+pub mod consts;
 
 use crate::handle::linux_handle::types::*;
 use crate::handle::linux_handle::enums::*;
