@@ -20,10 +20,10 @@ use std::ptr::null_mut as nullptr;
 
 pub struct LinuxHandle
 {
-	xcb_conn: *mut xcb_connection_t,
-	xcb_window: xcb_window_t,
-	atom_wm_protocols: xcb_atom_t,
-	atom_wm_delete_window: xcb_atom_t
+	pub xcb_conn: *mut xcb_connection_t,
+	pub xcb_window: xcb_window_t,
+	pub atom_wm_protocols: xcb_atom_t,
+	pub atom_wm_delete_window: xcb_atom_t
 }
 
 impl Drop for LinuxHandle
@@ -189,7 +189,7 @@ impl Handle for LinuxHandle
 	fn show_pointer(&self) {}
 
 	fn get_event(&self) -> Option<WindowEvent> { return None; }
-	fn get_size(&self) -> (u32, u32) { return ( 0u32, 0u32) }
+	fn get_size(&self) -> (u32, u32) { return (0u32, 0u32) }
 
 	fn set_size(&self, width: u32, height: u32) {}
 	fn set_title<T: ToString>(&self, title: T) {}

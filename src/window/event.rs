@@ -32,7 +32,7 @@ pub enum MouseCode
 	Middle,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 #[repr(u32)]
 pub enum KeyCode
 {

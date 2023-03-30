@@ -1,14 +1,14 @@
 #[cfg(target_os = "linux")]
 pub mod window_handle 
 {
-	use crate::handle::linux_handle::*;
+	pub use crate::handle::linux_handle::*;
 	pub type WindowHandle = LinuxHandle;
 }
 
 #[cfg(target_os = "windows")]
 pub mod window_handle
 {
-	use crate::handle::win32_handle::*;
+	pub use crate::handle::win32_handle::*;
 	pub type WindowHandle = Win32Handle;
 }
 
