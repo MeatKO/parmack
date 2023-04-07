@@ -33,13 +33,13 @@ pub enum MouseCode
 }
 
 #[derive(Debug, Clone, Copy)]
-#[repr(u32)]
+#[repr(u8)]
 pub enum KeyCode
 {
-	ESC = 9,
-	W = 25,
-	A = 38,
-	S = 39,
-	D = 40,
-	Unknown = 255, // placeholder default value
+	ESC,
+	W,
+	A,
+	S,
+	D,
+	Unknown, // placeholder default value
 }
