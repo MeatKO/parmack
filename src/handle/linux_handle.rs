@@ -4,16 +4,19 @@ pub mod structs;
 pub mod externs;
 pub mod functions;
 pub mod consts;
+pub mod keymap;
 
 use crate::handle::linux_handle::types::*;
 use crate::handle::linux_handle::enums::*;
 use crate::handle::linux_handle::externs::*;
 use crate::handle::linux_handle::functions::*;
 use crate::handle::linux_handle::consts::*;
+use crate::handle::linux_handle::keymap::*;
 
 use crate::handle::Handle;
 
 use crate::window::event::WindowEvent;
+use crate::window::event::WindowActions;
 use crate::window::consts::*;
 
 use std::ptr::null_mut as nullptr;
@@ -188,7 +191,79 @@ impl Handle for LinuxHandle
 	fn hide_pointer(&self) {}
 	fn show_pointer(&self) {}
 
-	fn get_event(&self) -> Option<WindowEvent> { return None; }
+	fn get_event(&self) -> Option<WindowEvent> 
+	{ 
+		unsafe 
+		{
+			if xcb_connection_has_error(self.xcb_conn) > 0
+			{
+				todo!();
+			}
+
+			let event = xcb_poll_for_event(self.xcb_conn).as_mut()? as *mut xcb_generic_event_t;
+
+			// we clear the most significant bit of the 8 bit response_type
+			// for WHATEVER reason...
+			match ((*event).response_type & 0x7F) as u32
+			{
+				XCB_KEY_RELEASE =>
+				{
+					let key_code = *(event as *mut xcb_key_press_event_t);
+					return Some(WindowEvent::KeyRelease(convert_key_code(key_code.detail)))
+				}
+				XCB_KEY_PRESS => 
+				{
+					let key_code = *(event as *mut xcb_key_press_event_t);
+					return Some(WindowEvent::KeyPress(convert_key_code(key_code.detail)))
+				}
+				XCB_CLIENT_MESSAGE =>
+				{
+					let key_code = *(event as *mut xcb_client_message_event_t);
+
+					if key_code.data.data32[0] == self.atom_wm_delete_window
+					{
+						return Some(WindowEvent::WindowAction(WindowActions::Close))
+					}
+
+					return Some(WindowEvent::WindowAction(WindowActions::Expose))
+				}
+				XCB_MOTION_NOTIFY => 
+				{
+					let key_code = *(event as *mut xcb_motion_notify_event_t);
+					return Some(
+						WindowEvent::WindowAction(
+							WindowActions::Motion{
+								x: key_code.event_x as i32, 
+								y: key_code.event_y as i32
+							}
+						)
+					);
+				}
+				XCB_CONFIGURE_NOTIFY =>
+				{
+					let key_code = *(event as *mut xcb_configure_notify_event_t);
+					return Some(
+						WindowEvent::WindowAction(
+							WindowActions::Configure{ 
+								width: key_code.height as i32,
+								height: key_code.width as i32
+							}
+						)
+					);
+				}
+				XCB_FOCUS_IN =>
+				{
+					return Some(WindowEvent::WindowAction(WindowActions::FocusIn));
+				}
+				XCB_FOCUS_OUT =>
+				{
+					return Some(WindowEvent::WindowAction(WindowActions::FocusOut));
+				}
+				any => { println!("unknown event {}", any); return None }
+			}
+		}
+	}
+
 	fn get_size(&self) -> (u32, u32) { return (0u32, 0u32) }
 
 	fn set_size(&self, width: u32, height: u32) {}

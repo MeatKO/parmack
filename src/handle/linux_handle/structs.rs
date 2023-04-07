@@ -100,3 +100,87 @@ pub enum xcb_prop_mode_t_struct {
     XCB_PROP_MODE_PREPEND = 1,
     XCB_PROP_MODE_APPEND = 2,
 }
+
+#[repr(C)]
+pub struct xcb_generic_event_t_struct {
+    pub response_type: u8,
+    pub pad0: u8,
+    pub sequence: u16,
+    pub pad: [u32; 7usize],
+    pub full_sequence: u32,
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_key_press_event_t_struct {
+    pub response_type: u8,
+    pub detail: xcb_keycode_t,
+    pub sequence: u16,
+    pub time: xcb_timestamp_t,
+    pub root: xcb_window_t,
+    pub event: xcb_window_t,
+    pub child: xcb_window_t,
+    pub root_x: i16,
+    pub root_y: i16,
+    pub event_x: i16,
+    pub event_y: i16,
+    pub state: u16,
+    pub same_screen: u8,
+    pub pad0: u8,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct xcb_client_message_event_t_struct {
+    pub response_type: u8,
+    pub format: u8,
+    pub sequence: u16,
+    pub window: xcb_window_t,
+    pub type_: xcb_atom_t,
+    pub data: xcb_client_message_data_t,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union xcb_client_message_data_t_struct {
+    pub data8: [u8; 20usize],
+    pub data16: [u16; 10usize],
+    pub data32: [u32; 5usize],
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_motion_notify_event_t_struct {
+    pub response_type: u8,
+    pub detail: u8,
+    pub sequence: u16,
+    pub time: xcb_timestamp_t,
+    pub root: xcb_window_t,
+    pub event: xcb_window_t,
+    pub child: xcb_window_t,
+    pub root_x: i16,
+    pub root_y: i16,
+    pub event_x: i16,
+    pub event_y: i16,
+    pub state: u16,
+    pub same_screen: u8,
+    pub pad0: u8,
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_configure_notify_event_t_struct {
+    pub response_type: u8,
+    pub pad0: u8,
+    pub sequence: u16,
+    pub event: xcb_window_t,
+    pub window: xcb_window_t,
+    pub above_sibling: xcb_window_t,
+    pub x: i16,
+    pub y: i16,
+    pub width: u16,
+    pub height: u16,
+    pub border_width: u16,
+    pub override_redirect: u8,
+    pub pad1: u8,
+}

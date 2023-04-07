@@ -15,10 +15,18 @@ pub type xcb_intern_atom_cookie_t = xcb_intern_atom_cookie_t_struct;
 pub type xcb_generic_error_t = xcb_generic_error_t_struct;
 pub type xcb_intern_atom_reply_t = xcb_intern_atom_reply_t_struct;
 pub type xcb_prop_mode_t = xcb_prop_mode_t_struct;
+pub type xcb_generic_event_t = xcb_generic_event_t_struct;
+pub type xcb_key_press_event_t = xcb_key_press_event_t_struct;
+pub type xcb_key_release_event_t = xcb_key_press_event_t_struct;
+pub type xcb_client_message_event_t = xcb_client_message_event_t_struct;
+pub type xcb_client_message_data_t = xcb_client_message_data_t_struct;
+pub type xcb_motion_notify_event_t = xcb_motion_notify_event_t_struct;
+pub type xcb_configure_notify_event_t = xcb_configure_notify_event_t_struct;
 
 pub type xcb_window_t = u32;
 pub type xcb_atom_t = u32;
 pub type xcb_colormap_t = u32;
 pub type xcb_visualid_t = u32;
+pub type xcb_timestamp_t = u32;
 
 pub type xcb_keycode_t = u8;
