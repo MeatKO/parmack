@@ -17,11 +17,11 @@ pub mod consts;
 
 use crate::handle::Handle;
 
-use self::window_handle::WindowHandle;
+use self::{window_handle::WindowHandle, consts::*};
 
 pub struct WindowBuilder
 {
-	title: Option<String>,
+	title: String,
 	width: u32,
 	height: u32,
 }
@@ -31,15 +31,15 @@ impl WindowBuilder
 	pub fn new() -> Self
 	{
 		return Self {
-			title: None,
-			width: 150,
-			height: 150,
+			title: DEFAULT_WINDOW_NAME.to_owned(),
+			width: DEFAULT_WIDTH,
+			height: DEFAULT_HEIGHT,
 		}
 	}
 
 	pub fn with_title<T: ToString>(mut self, title: T) -> Self
 	{
-		self.title = Some(title.to_string());
+		self.title = title.to_string();
 		self
 	}
 
@@ -52,6 +52,6 @@ impl WindowBuilder
 
 	pub fn build(self) -> Result<WindowHandle, String>
 	{
-		Ok(WindowHandle::new(&self.title, self.width, self.height)?)
+		Ok(WindowHandle::new(self.title, self.width, self.height)?)
 	}
 }

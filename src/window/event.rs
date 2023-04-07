@@ -5,7 +5,8 @@ pub enum WindowEvent
 	KeyRelease(KeyCode),
 	MousePress(MouseCode, u32, u32),
 	MouseRelease(MouseCode, u32, u32),
-	WindowAction(WindowActions)
+	WindowAction(WindowActions),
+	Unknown(u32)
 }
 
 #[derive(Debug)]

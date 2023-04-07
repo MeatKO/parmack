@@ -5,6 +5,7 @@ pub mod externs;
 pub mod functions;
 pub mod consts;
 pub mod keymap;
+pub mod events;
 
 use crate::handle::linux_handle::types::*;
 use crate::handle::linux_handle::enums::*;
@@ -43,7 +44,7 @@ impl Drop for LinuxHandle
 
 impl Handle for LinuxHandle
 {
-	fn new(window_title: &Option<String>, width: u32, height: u32) -> Result<Self, String>
+	fn new(title: String, width: u32, height: u32) -> Result<Self, String>
 	{
 		let width = 
 			match width
@@ -131,13 +132,6 @@ impl Handle for LinuxHandle
 				(&mut handle.atom_wm_delete_window as *const xcb_atom_t) as _
 			);
 
-			let title = 
-				match window_title
-				{
-					Some(title) => { title.clone() }
-					None => { DEFAULT_WINDOW_NAME.to_owned() }
-				};
-
 			xcb_change_property(
 				handle.xcb_conn,
 				xcb_prop_mode_t::XCB_PROP_MODE_REPLACE as u8,
@@ -151,47 +145,18 @@ impl Handle for LinuxHandle
 
 			xcb_map_window(handle.xcb_conn, handle.xcb_window);
 			xcb_flush(handle.xcb_conn);
-
-			// let needed_extensions = vec![
-			// 	"VK_KHR_xcb_surface",
-			// 	"VK_KHR_surface"
-			// ];
-
-			// get_missing_extensions(&needed_extensions, &vk_handle.available_extensions);
-
-			// match create_xcb_surface_function(&vk_handle.instance)
-			// {
-			// 	None => { panic!("This platform doesn't offer a 'vkCreateXcbSurfaceKHR' function.") }
-			// 	Some(function) => 
-			// 	{
-			// 		let surface_create_info = VkXcbSurfaceCreateInfoKHR {
-			// 			sType: VkStructureType::VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR,
-			// 			connection: handle.xcb_conn,
-			// 			window: handle.xcb_window,
-			// 			flags: 0,
-			// 			pNext: nullptr()
-			// 		};
-
-			// 		let result = function(vk_handle.instance, &surface_create_info, nullptr(), &mut vk_handle.window_surface);
-			// 		match result
-			// 		{
-			// 			VkResult::VK_SUCCESS => {}
-			// 			res => { panic!("Vulkan is not supported on given X window. vkCreateXcbSurfaceKHR() resulted in {:?}", res) }
-			// 		}
-			// 	}
-			// }
 		}
 
 		Ok(handle)
 	}
 	
-	fn lock_pointer(&self) {}
-	fn unlock_pointer(&self) {}
+	fn confine_pointer(&self) {}
+	fn release_pointer(&self) {}
 	fn center_pointer(&self) {}
 	fn hide_pointer(&self) {}
 	fn show_pointer(&self) {}
 
-	fn get_event(&self) -> Option<WindowEvent> 
+	fn get_events(&self) -> Vec<WindowEvent>
 	{ 
 		unsafe 
 		{
@@ -200,74 +165,24 @@ impl Handle for LinuxHandle
 				todo!();
 			}
 
-			let event = xcb_poll_for_event(self.xcb_conn).as_mut()? as *mut xcb_generic_event_t;
+			let mut event_vec = vec![];
 
-			// we clear the most significant bit of the 8 bit response_type
-			// for WHATEVER reason...
-			match ((*event).response_type & 0x7F) as u32
+			while let Some(event) = xcb_poll_for_event(self.xcb_conn).as_mut()
 			{
-				XCB_KEY_RELEASE =>
-				{
-					let key_code = *(event as *mut xcb_key_press_event_t);
-					return Some(WindowEvent::KeyRelease(convert_key_code(key_code.detail)))
-				}
-				XCB_KEY_PRESS => 
-				{
-					let key_code = *(event as *mut xcb_key_press_event_t);
-					return Some(WindowEvent::KeyPress(convert_key_code(key_code.detail)))
-				}
-				XCB_CLIENT_MESSAGE =>
-				{
-					let key_code = *(event as *mut xcb_client_message_event_t);
-
-					if key_code.data.data32[0] == self.atom_wm_delete_window
-					{
-						return Some(WindowEvent::WindowAction(WindowActions::Close))
-					}
-
-					return Some(WindowEvent::WindowAction(WindowActions::Expose))
-				}
-				XCB_MOTION_NOTIFY => 
-				{
-					let key_code = *(event as *mut xcb_motion_notify_event_t);
-					return Some(
-						WindowEvent::WindowAction(
-							WindowActions::Motion{
-								x: key_code.event_x as i32, 
-								y: key_code.event_y as i32
-							}
-						)
-					);
-				}
-				XCB_CONFIGURE_NOTIFY =>
-				{
-					let key_code = *(event as *mut xcb_configure_notify_event_t);
-					return Some(
-						WindowEvent::WindowAction(
-							WindowActions::Configure{ 
-								width: key_code.height as i32,
-								height: key_code.width as i32
-							}
-						)
-					);
-				}
-				XCB_FOCUS_IN =>
-				{
-					return Some(WindowEvent::WindowAction(WindowActions::FocusIn));
-				}
-				XCB_FOCUS_OUT =>
-				{
-					return Some(WindowEvent::WindowAction(WindowActions::FocusOut));
-				}
-				any => { println!("unknown event {}", any); return None }
+				event_vec.push(self.convert_generic_event(event));
 			}
+
+			return event_vec;
 		}
 	}
 
 	fn get_size(&self) -> (u32, u32) { return (0u32, 0u32) }
+	fn get_pointer_location(&self) -> (u32, u32)  { return (0u32, 0u32) }
+	fn get_window_origin(&self) -> (u32, u32)  { return (0u32, 0u32) }
 
 	fn set_size(&self, width: u32, height: u32) {}
 	fn set_title<T: ToString>(&self, title: T) {}
+	fn set_pointer(&self, x_rel: u32, y_rel: u32) {}
 
 	fn destroy(&mut self) {}
 }
