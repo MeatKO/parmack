@@ -115,14 +115,36 @@ extern "C"
         dst_y: i16,
     ) -> xcb_void_cookie_t;
 
-		pub fn xcb_query_pointer(
-			c: *mut xcb_connection_t,
-			window: xcb_window_t,
-		) -> xcb_query_pointer_cookie_t;
+	pub fn xcb_query_pointer(
+		c: *mut xcb_connection_t,
+		window: xcb_window_t,
+	) -> xcb_query_pointer_cookie_t;
 
-		pub fn xcb_query_pointer_reply(
-			c: *mut xcb_connection_t,
-			cookie: xcb_query_pointer_cookie_t,
-			e: *mut *mut xcb_generic_error_t,
-		) -> *mut xcb_query_pointer_reply_t;
+	pub fn xcb_query_pointer_reply(
+		c: *mut xcb_connection_t,
+		cookie: xcb_query_pointer_cookie_t,
+		e: *mut *mut xcb_generic_error_t,
+	) -> *mut xcb_query_pointer_reply_t;
+
+	pub fn xcb_open_font_checked(
+        c: *mut xcb_connection_t,
+        fid: xcb_font_t,
+        name_len: u16,
+        name: *const ::std::os::raw::c_char,
+    ) -> xcb_void_cookie_t;
+
+	pub fn xcb_create_glyph_cursor(
+        c: *mut xcb_connection_t,
+        cid: xcb_cursor_t,
+        source_font: xcb_font_t,
+        mask_font: xcb_font_t,
+        source_char: u16,
+        mask_char: u16,
+        fore_red: u16,
+        fore_green: u16,
+        fore_blue: u16,
+        back_red: u16,
+        back_green: u16,
+        back_blue: u16,
+    ) -> xcb_void_cookie_t;
 }

@@ -36,5 +36,6 @@ pub type xcb_visualid_t = u32;
 pub type xcb_timestamp_t = u32;
 pub type xcb_cursor_t = u32;
 pub type xcb_drawable_t = u32;
+pub type xcb_font_t = u32;
 
 pub type xcb_keycode_t = u8;

@@ -220,7 +220,40 @@ impl Handle for LinuxHandle
 		}
 	}
 
-	fn show_pointer(&self, active: bool) {}
+	fn show_pointer(&self, active: bool) 
+	{
+		unsafe 
+		{
+			let font = xcb_generate_id(self.xcb_conn);
+
+			// ignoring the font cookie
+			xcb_open_font_checked (
+				self.xcb_conn,
+				font,
+				"cursor\0".len() as u16,
+				"cursor\0".as_ptr() as _
+			);
+
+			let cursor = xcb_generate_id(self.xcb_conn);
+
+			xcb_create_glyph_cursor(
+				self.xcb_conn, 
+				cursor, 
+				font, 
+				font, 
+				cursor as u16, 
+				(cursor + 1) as u16, 
+				0, 
+				0, 
+				0, 
+				0, 
+				0, 
+				0
+			);
+
+			xcb_flush(self.xcb_conn);
+		}
+	}
 
 	fn get_events(&self) -> Vec<WindowEvent>
 	{ 
