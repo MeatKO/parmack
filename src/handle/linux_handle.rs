@@ -195,6 +195,14 @@ impl Handle for LinuxHandle
 		unsafe 
 		{
 			let (current_x, current_y) = self.get_pointer_location();
+			let (current_width, current_height) = self.get_size();
+
+			if current_x == (current_width / 2) as i32 &&
+				current_y == (current_height / 2) as i32
+			{
+				return;
+			}
+			
 
 			xcb_warp_pointer(
 				self.xcb_conn, 
@@ -202,10 +210,10 @@ impl Handle for LinuxHandle
 				self.xcb_window, 
 				0, 
 				0, 
-				800, 
-				600, 
-				400, 
-				300
+				current_width as _, 
+				current_height as _, 
+				(current_width / 2) as _,  
+				(current_height / 2) as _
 			);
 
 			xcb_flush(self.xcb_conn);
@@ -267,11 +275,7 @@ impl Handle for LinuxHandle
 				None => { return (0i32, 0i32) }
 				Some(response) =>
 				{
-					match response.same_screen
-					{
-						0 => { return (0i32, 0i32) }
-						_ => { return (response.win_x as i32, response.win_y as i32) }
-					}
+					return (response.win_x as i32, response.win_y as i32)
 				}
 			}
 		}
