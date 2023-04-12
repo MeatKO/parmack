@@ -15,7 +15,7 @@ pub trait Handle : Sized + Drop
 
 	fn get_events(&self) -> Vec<WindowEvent>;
 	fn get_size(&self) -> (u32, u32);
-	fn get_pointer_location(&self) -> (u32, u32);
+	fn get_pointer_location(&self) -> (i32, i32);
 	fn get_window_origin(&self) -> (u32, u32);
 
 	fn set_size(&self, width: u32, height: u32);

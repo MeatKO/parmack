@@ -28,7 +28,7 @@ impl Handle for Win32Handle
 
 	fn get_events(&self) -> Vec<WindowEvent> { return vec![]; }
 	fn get_size(&self) -> (u32, u32) { return ( 0u32, 0u32) }
-	fn get_pointer_location(&self) -> (u32, u32)  { return (0u32, 0u32) }
+	fn get_pointer_location(&self) -> (i32, i32)  { return (0i32, 0i32) }
 	fn get_window_origin(&self) -> (u32, u32)  { return (0u32, 0u32) }
 
 	fn set_size(&self, width: u32, height: u32) {}

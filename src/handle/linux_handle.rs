@@ -253,7 +253,7 @@ impl Handle for LinuxHandle
 			}
 		}
 	}
-	fn get_pointer_location(&self) -> (u32, u32)  
+	fn get_pointer_location(&self) -> (i32, i32)  
 	{
 		unsafe 
 		{
@@ -264,13 +264,13 @@ impl Handle for LinuxHandle
 
 			match pointer_response.as_mut()
 			{
-				None => { return (0u32, 0u32) }
+				None => { return (0i32, 0i32) }
 				Some(response) =>
 				{
 					match response.same_screen
 					{
-						0 => { return (0u32, 0u32) }
-						_ => { return (response.win_x as u32, response.win_y as u32) }
+						0 => { return (0i32, 0i32) }
+						_ => { return (response.win_x as i32, response.win_y as i32) }
 					}
 				}
 			}
