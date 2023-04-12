@@ -147,4 +147,14 @@ extern "C"
         back_green: u16,
         back_blue: u16,
     ) -> xcb_void_cookie_t;
+
+	pub fn xcb_xfixes_hide_cursor(
+		c: *mut xcb_connection_t,
+		window: xcb_window_t,
+	) -> xcb_void_cookie_t;
+
+	pub fn xcb_xfixes_show_cursor(
+		c: *mut xcb_connection_t,
+		window: xcb_window_t,
+	) -> xcb_void_cookie_t;
 }
