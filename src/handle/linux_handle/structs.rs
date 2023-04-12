@@ -212,3 +212,35 @@ pub struct xcb_get_geometry_reply_t_struct {
     pub border_width: u16,
     pub pad0: [u8; 2usize],
 }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_query_pointer_cookie_t_struct {
+    pub sequence: ::std::os::raw::c_uint,
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_query_pointer_request_t_struct {
+    pub major_opcode: u8,
+    pub pad0: u8,
+    pub length: u16,
+    pub window: xcb_window_t,
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_query_pointer_reply_t_struct {
+    pub response_type: u8,
+    pub same_screen: u8,
+    pub sequence: u16,
+    pub length: u32,
+    pub root: xcb_window_t,
+    pub child: xcb_window_t,
+    pub root_x: i16,
+    pub root_y: i16,
+    pub win_x: i16,
+    pub win_y: i16,
+    pub mask: u16,
+    pub pad0: [u8; 2usize],
+}

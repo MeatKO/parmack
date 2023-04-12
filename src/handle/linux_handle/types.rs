@@ -25,6 +25,9 @@ pub type xcb_configure_notify_event_t = xcb_configure_notify_event_t_struct;
 pub type xcb_grab_pointer_cookie_t = xcb_grab_pointer_cookie_t_struct;
 pub type xcb_get_geometry_cookie_t = xcb_get_geometry_cookie_t_struct;
 pub type xcb_get_geometry_reply_t = xcb_get_geometry_reply_t_struct;
+pub type xcb_query_pointer_cookie_t = xcb_query_pointer_cookie_t_struct;
+pub type xcb_query_pointer_request_t = xcb_query_pointer_request_t_struct;
+pub type xcb_query_pointer_reply_t = xcb_query_pointer_reply_t_struct;
 
 pub type xcb_window_t = u32;
 pub type xcb_atom_t = u32;

@@ -102,4 +102,27 @@ extern "C"
         cookie: xcb_get_geometry_cookie_t,
         e: *mut *mut xcb_generic_error_t,
     ) -> *mut xcb_get_geometry_reply_t;
+
+	pub fn xcb_warp_pointer(
+        c: *mut xcb_connection_t,
+        src_window: xcb_window_t,
+        dst_window: xcb_window_t,
+        src_x: i16,
+        src_y: i16,
+        src_width: u16,
+        src_height: u16,
+        dst_x: i16,
+        dst_y: i16,
+    ) -> xcb_void_cookie_t;
+
+		pub fn xcb_query_pointer(
+			c: *mut xcb_connection_t,
+			window: xcb_window_t,
+		) -> xcb_query_pointer_cookie_t;
+
+		pub fn xcb_query_pointer_reply(
+			c: *mut xcb_connection_t,
+			cookie: xcb_query_pointer_cookie_t,
+			e: *mut *mut xcb_generic_error_t,
+		) -> *mut xcb_query_pointer_reply_t;
 }

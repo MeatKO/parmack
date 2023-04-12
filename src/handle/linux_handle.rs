@@ -188,7 +188,30 @@ impl Handle for LinuxHandle
 			}
 		}
 	}
-	fn center_pointer(&self, active: bool) {}
+
+	// this does not currently toggle... fix later
+	fn center_pointer(&self, active: bool) 
+	{
+		unsafe 
+		{
+			let (current_x, current_y) = self.get_pointer_location();
+
+			xcb_warp_pointer(
+				self.xcb_conn, 
+				self.xcb_window, 
+				self.xcb_window, 
+				0, 
+				0, 
+				800, 
+				600, 
+				400, 
+				300
+			);
+
+			xcb_flush(self.xcb_conn);
+		}
+	}
+
 	fn show_pointer(&self, active: bool) {}
 
 	fn get_events(&self) -> Vec<WindowEvent>
@@ -218,7 +241,6 @@ impl Handle for LinuxHandle
 			let geometry_cookie = xcb_get_geometry(self.xcb_conn, self.xcb_window);
 
 			let mut err: *mut xcb_generic_error_t = &mut std::mem::zeroed::<xcb_generic_error_t>();
-
 			let geometry_response = xcb_get_geometry_reply(self.xcb_conn, geometry_cookie, &mut err);
 
 			match geometry_response.as_mut()
@@ -231,7 +253,29 @@ impl Handle for LinuxHandle
 			}
 		}
 	}
-	fn get_pointer_location(&self) -> (u32, u32)  { return (0u32, 0u32) }
+	fn get_pointer_location(&self) -> (u32, u32)  
+	{
+		unsafe 
+		{
+			let pointer_cookie = xcb_query_pointer(self.xcb_conn, self.xcb_window);
+
+			let mut err: *mut xcb_generic_error_t = &mut std::mem::zeroed::<xcb_generic_error_t>();
+			let pointer_response = xcb_query_pointer_reply(self.xcb_conn, pointer_cookie, &mut err);
+
+			match pointer_response.as_mut()
+			{
+				None => { return (0u32, 0u32) }
+				Some(response) =>
+				{
+					match response.same_screen
+					{
+						0 => { return (0u32, 0u32) }
+						_ => { return (response.win_x as u32, response.win_y as u32) }
+					}
+				}
+			}
+		}
+	}
 	fn get_window_origin(&self) -> (u32, u32)  { return (0u32, 0u32) }
 
 	fn set_size(&self, width: u32, height: u32) {}
