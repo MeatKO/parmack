@@ -77,4 +77,29 @@ extern "C"
 	pub fn xcb_destroy_window(c: *mut xcb_connection_t, window: xcb_window_t) -> xcb_void_cookie_t;
 
 	pub fn xcb_poll_for_event(c: *mut xcb_connection_t) -> *mut xcb_generic_event_t;
+
+	pub fn xcb_grab_pointer(
+        c: *mut xcb_connection_t,
+        owner_events: u8,
+        grab_window: xcb_window_t,
+        event_mask: u16,
+        pointer_mode: u8,
+        keyboard_mode: u8,
+        confine_to: xcb_window_t,
+        cursor: xcb_cursor_t,
+        time: xcb_timestamp_t,
+    ) -> xcb_grab_pointer_cookie_t;
+
+	pub fn xcb_ungrab_pointer(c: *mut xcb_connection_t, time: xcb_timestamp_t) -> xcb_void_cookie_t;
+
+	pub fn xcb_get_geometry(
+        c: *mut xcb_connection_t,
+        drawable: xcb_drawable_t,
+    ) -> xcb_get_geometry_cookie_t;
+
+	pub fn xcb_get_geometry_reply(
+        c: *mut xcb_connection_t,
+        cookie: xcb_get_geometry_cookie_t,
+        e: *mut *mut xcb_generic_error_t,
+    ) -> *mut xcb_get_geometry_reply_t;
 }

@@ -136,3 +136,12 @@ pub enum xcb_atom_enum_t
     XCB_ATOM_WM_CLASS = 67,
     XCB_ATOM_WM_TRANSIENT_FOR = 68,
 }
+
+#[repr(u32)]
+#[non_exhaustive]
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub enum xcb_grab_mode_t 
+{
+    XCB_GRAB_MODE_SYNC = 0,
+    XCB_GRAB_MODE_ASYNC = 1,
+}

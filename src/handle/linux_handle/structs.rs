@@ -184,3 +184,31 @@ pub struct xcb_configure_notify_event_t_struct {
     pub override_redirect: u8,
     pub pad1: u8,
 }
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_grab_pointer_cookie_t_struct {
+    pub sequence: ::std::os::raw::c_uint,
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_get_geometry_cookie_t_struct {
+    pub sequence: ::std::os::raw::c_uint,
+}
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_get_geometry_reply_t_struct {
+    pub response_type: u8,
+    pub depth: u8,
+    pub sequence: u16,
+    pub length: u32,
+    pub root: xcb_window_t,
+    pub x: i16,
+    pub y: i16,
+    pub width: u16,
+    pub height: u16,
+    pub border_width: u16,
+    pub pad0: [u8; 2usize],
+}

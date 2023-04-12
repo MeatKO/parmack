@@ -150,11 +150,46 @@ impl Handle for LinuxHandle
 		Ok(handle)
 	}
 	
-	fn confine_pointer(&self) {}
-	fn release_pointer(&self) {}
-	fn center_pointer(&self) {}
-	fn hide_pointer(&self) {}
-	fn show_pointer(&self) {}
+	fn confine_pointer(&self, active: bool)
+	{
+		unsafe 
+		{
+			match active 
+			{
+				true => 
+				{
+					xcb_grab_pointer(
+						self.xcb_conn, 
+						0, 
+						self.xcb_window,
+						xcb_event_mask_t::XCB_EVENT_MASK_FOCUS_CHANGE as u16 |
+						xcb_event_mask_t::XCB_EVENT_MASK_BUTTON_PRESS as u16 |
+						xcb_event_mask_t::XCB_EVENT_MASK_BUTTON_RELEASE as u16 |
+						xcb_event_mask_t::XCB_EVENT_MASK_POINTER_MOTION as u16 |
+						xcb_event_mask_t::XCB_EVENT_MASK_LEAVE_WINDOW as u16,
+						xcb_grab_mode_t::XCB_GRAB_MODE_ASYNC as u8, 
+						xcb_grab_mode_t::XCB_GRAB_MODE_ASYNC as u8, 
+						self.xcb_window,
+						0,
+						XCB_CURRENT_TIME
+					);
+		
+					xcb_flush(self.xcb_conn);
+				}
+				false => 
+				{
+					xcb_ungrab_pointer(
+						self.xcb_conn,
+						XCB_CURRENT_TIME
+					);
+
+					xcb_flush(self.xcb_conn);
+				}
+			}
+		}
+	}
+	fn center_pointer(&self, active: bool) {}
+	fn show_pointer(&self, active: bool) {}
 
 	fn get_events(&self) -> Vec<WindowEvent>
 	{ 
@@ -176,7 +211,26 @@ impl Handle for LinuxHandle
 		}
 	}
 
-	fn get_size(&self) -> (u32, u32) { return (0u32, 0u32) }
+	fn get_size(&self) -> (u32, u32) 
+	{ 
+		unsafe 
+		{
+			let geometry_cookie = xcb_get_geometry(self.xcb_conn, self.xcb_window);
+
+			let mut err: *mut xcb_generic_error_t = &mut std::mem::zeroed::<xcb_generic_error_t>();
+
+			let geometry_response = xcb_get_geometry_reply(self.xcb_conn, geometry_cookie, &mut err);
+
+			match geometry_response.as_mut()
+			{
+				None => { return (0u32, 0u32) }
+				Some(response) =>
+				{
+					return (response.width as u32, response.height as u32);
+				}
+			}
+		}
+	}
 	fn get_pointer_location(&self) -> (u32, u32)  { return (0u32, 0u32) }
 	fn get_window_origin(&self) -> (u32, u32)  { return (0u32, 0u32) }
 

@@ -22,11 +22,9 @@ impl Handle for Win32Handle
 		return Ok(Win32Handle {});
 	}
 	
-	fn confine_pointer(&self) {}
-	fn release_pointer(&self) {}
-	fn center_pointer(&self) {}
-	fn hide_pointer(&self) {}
-	fn show_pointer(&self) {}
+	fn confine_pointer(&self, active: bool) {}
+	fn center_pointer(&self, active: bool) {}
+	fn show_pointer(&self, active: bool) {}
 
 	fn get_events(&self) -> Vec<WindowEvent> { return vec![]; }
 	fn get_size(&self) -> (u32, u32) { return ( 0u32, 0u32) }
