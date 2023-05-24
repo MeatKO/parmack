@@ -8,6 +8,8 @@ use crate::handle::linux_handle::types::*;
 
 extern "C" 
 {
+	pub fn free(__ptr: *mut ::std::os::raw::c_void);
+
     pub fn xcb_connection_has_error(c: *mut xcb_connection_t) -> ::std::os::raw::c_int;
 
     pub fn xcb_connect(

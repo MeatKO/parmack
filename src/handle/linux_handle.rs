@@ -37,6 +37,7 @@ impl Drop for LinuxHandle
 		unsafe
 		{
 			xcb_destroy_window(self.xcb_conn, self.xcb_window);
+			xcb_flush(self.xcb_conn);
 			self.xcb_conn = nullptr();
 		}
 	}
@@ -203,7 +204,6 @@ impl Handle for LinuxHandle
 				return;
 			}
 			
-
 			xcb_warp_pointer(
 				self.xcb_conn, 
 				self.xcb_window, 
@@ -261,6 +261,8 @@ impl Handle for LinuxHandle
 			while let Some(event) = xcb_poll_for_event(self.xcb_conn).as_mut()
 			{
 				event_vec.push(self.convert_generic_event(event));
+
+				free((event as *mut _) as _);
 			}
 
 			return event_vec;
@@ -276,14 +278,20 @@ impl Handle for LinuxHandle
 			let mut err: *mut xcb_generic_error_t = &mut std::mem::zeroed::<xcb_generic_error_t>();
 			let geometry_response = xcb_get_geometry_reply(self.xcb_conn, geometry_cookie, &mut err);
 
-			match geometry_response.as_mut()
-			{
-				None => { return (0u32, 0u32) }
-				Some(response) =>
+			let size =
+				match geometry_response.as_mut()
 				{
-					return (response.width as u32, response.height as u32);
-				}
-			}
+					None => { (0u32, 0u32) }
+					Some(response) =>
+					{
+						(response.width as u32, response.height as u32)
+					}
+				};
+
+			free((geometry_response as *mut _) as _);
+			free((err as *mut _) as _);
+
+			size
 		}
 	}
 	fn get_pointer_location(&self) -> (i32, i32)  
@@ -295,21 +303,48 @@ impl Handle for LinuxHandle
 			let mut err: *mut xcb_generic_error_t = &mut std::mem::zeroed::<xcb_generic_error_t>();
 			let pointer_response = xcb_query_pointer_reply(self.xcb_conn, pointer_cookie, &mut err);
 
-			match pointer_response.as_mut()
-			{
-				None => { return (0i32, 0i32) }
-				Some(response) =>
+			let location =
+				match pointer_response.as_mut()
 				{
-					return (response.win_x as i32, response.win_y as i32)
-				}
-			}
+					None => { (0i32, 0i32) }
+					Some(response) =>
+					{
+						(response.win_x as i32, response.win_y as i32)
+					}
+				};
+
+			free((pointer_response as *mut _) as _);
+			free((err as *mut _) as _);
+
+			location
 		}
 	}
 	fn get_window_origin(&self) -> (u32, u32)  { return (0u32, 0u32) }
 
 	fn set_size(&self, width: u32, height: u32) {}
 	fn set_title<T: ToString>(&self, title: T) {}
-	fn set_pointer(&self, x_rel: u32, y_rel: u32) {}
+
+	fn set_pointer(&self, x_rel: u32, y_rel: u32) 
+	{
+		unsafe 
+		{
+			let (current_width, current_height) = self.get_size();
+
+			xcb_warp_pointer(
+				self.xcb_conn, 
+				self.xcb_window, 
+				self.xcb_window, 
+				0, 
+				0, 
+				current_width as _, 
+				current_height as _, 
+				x_rel as _,  
+				y_rel as _
+			);
+
+			xcb_flush(self.xcb_conn);
+		}
+	}
 
 	fn destroy(&mut self) {}
 }
