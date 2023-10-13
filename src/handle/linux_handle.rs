@@ -6,21 +6,22 @@ pub mod functions;
 pub mod consts;
 pub mod keymap;
 pub mod events;
+pub mod wrappers;
 
 use crate::handle::linux_handle::types::*;
 use crate::handle::linux_handle::enums::*;
 use crate::handle::linux_handle::externs::*;
 use crate::handle::linux_handle::functions::*;
 use crate::handle::linux_handle::consts::*;
-use crate::handle::linux_handle::keymap::*;
 
 use crate::handle::Handle;
 
 use crate::window::event::WindowEvent;
-use crate::window::event::WindowActions;
 use crate::window::consts::*;
 
 use std::ptr::null_mut as nullptr;
+
+use self::wrappers::XCBWrapper;
 
 pub struct LinuxHandle
 {
@@ -258,11 +259,11 @@ impl Handle for LinuxHandle
 
 			let mut event_vec = vec![];
 
-			while let Some(event) = xcb_poll_for_event(self.xcb_conn).as_mut()
+			while let Some(event) = xcb_poll_for_event(self.xcb_conn).0.as_mut()
 			{
 				event_vec.push(self.convert_generic_event(event));
 
-				free((event as *mut _) as _);
+				// free((event as *mut _) as _);
 			}
 
 			return event_vec;
@@ -275,11 +276,11 @@ impl Handle for LinuxHandle
 		{
 			let geometry_cookie = xcb_get_geometry(self.xcb_conn, self.xcb_window);
 
-			let mut err: *mut xcb_generic_error_t = &mut std::mem::zeroed::<xcb_generic_error_t>();
-			let geometry_response = xcb_get_geometry_reply(self.xcb_conn, geometry_cookie, &mut err);
+			let mut err: XCBWrapper<xcb_generic_error_t> = XCBWrapper::<xcb_generic_error_t>(&mut std::mem::zeroed::<xcb_generic_error_t>());
+			let geometry_response = xcb_get_geometry_reply(self.xcb_conn, geometry_cookie, &mut err.0);
 
 			let size =
-				match geometry_response.as_mut()
+				match geometry_response.0.as_mut()
 				{
 					None => { (0u32, 0u32) }
 					Some(response) =>
@@ -288,23 +289,25 @@ impl Handle for LinuxHandle
 					}
 				};
 
-			free((geometry_response as *mut _) as _);
-			free((err as *mut _) as _);
+			// free((geometry_response as *mut _) as _);
+			// free((err as *mut _) as _);
 
 			size
 		}
 	}
+	
 	fn get_pointer_location(&self) -> (i32, i32)  
 	{
 		unsafe 
 		{
 			let pointer_cookie = xcb_query_pointer(self.xcb_conn, self.xcb_window);
 
-			let mut err: *mut xcb_generic_error_t = &mut std::mem::zeroed::<xcb_generic_error_t>();
-			let pointer_response = xcb_query_pointer_reply(self.xcb_conn, pointer_cookie, &mut err);
+			// let mut err: *mut xcb_generic_error_t = &mut std::mem::zeroed::<xcb_generic_error_t>();
+			let mut err: XCBWrapper<xcb_generic_error_t> = XCBWrapper::<xcb_generic_error_t>(&mut std::mem::zeroed::<xcb_generic_error_t>());
+			let pointer_response = xcb_query_pointer_reply(self.xcb_conn, pointer_cookie, &mut err.0);
 
 			let location =
-				match pointer_response.as_mut()
+				match pointer_response.0.as_mut()
 				{
 					None => { (0i32, 0i32) }
 					Some(response) =>
@@ -312,9 +315,6 @@ impl Handle for LinuxHandle
 						(response.win_x as i32, response.win_y as i32)
 					}
 				};
-
-			free((pointer_response as *mut _) as _);
-			free((err as *mut _) as _);
 
 			location
 		}

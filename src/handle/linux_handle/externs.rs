@@ -5,13 +5,15 @@
 #![allow(unused_variables)]
 
 use crate::handle::linux_handle::types::*;
+use crate::handle::linux_handle::wrappers::*;
 
 extern "C" 
 {
-	pub fn free(__ptr: *mut ::std::os::raw::c_void);
+	pub fn free(void_ptr: *mut ::std::os::raw::c_void);
 
     pub fn xcb_connection_has_error(c: *mut xcb_connection_t) -> ::std::os::raw::c_int;
 
+	// not wrapping this for now
     pub fn xcb_connect(
         displayname: *const ::std::os::raw::c_char,
         screenp: *mut ::std::os::raw::c_int,
@@ -22,6 +24,7 @@ extern "C"
     pub fn xcb_setup_roots_iterator(R: *const xcb_setup_t) -> xcb_screen_iterator_t;
 
 	pub fn xcb_get_setup(c: *mut xcb_connection_t) -> *const xcb_setup_t;
+	// pub fn xcb_get_setup(c: *mut xcb_connection_t) -> XCBWrapper<xcb_setup_t>;
 
 	pub fn xcb_create_window(
         c: *mut xcb_connection_t,
@@ -57,7 +60,7 @@ extern "C"
         c: *mut xcb_connection_t,
         cookie: xcb_intern_atom_cookie_t,
         e: *mut *mut xcb_generic_error_t,
-    ) -> *mut xcb_intern_atom_reply_t;
+    ) -> XCBWrapper<xcb_intern_atom_reply_t>; // potential segfault material
 
 	pub fn xcb_change_property(
         c: *mut xcb_connection_t,
@@ -78,7 +81,7 @@ extern "C"
 
 	pub fn xcb_destroy_window(c: *mut xcb_connection_t, window: xcb_window_t) -> xcb_void_cookie_t;
 
-	pub fn xcb_poll_for_event(c: *mut xcb_connection_t) -> *mut xcb_generic_event_t;
+	pub fn xcb_poll_for_event(c: *mut xcb_connection_t) -> XCBWrapper<xcb_generic_event_t>;
 
 	pub fn xcb_grab_pointer(
         c: *mut xcb_connection_t,
@@ -103,7 +106,7 @@ extern "C"
         c: *mut xcb_connection_t,
         cookie: xcb_get_geometry_cookie_t,
         e: *mut *mut xcb_generic_error_t,
-    ) -> *mut xcb_get_geometry_reply_t;
+    ) -> XCBWrapper<xcb_get_geometry_reply_t>;
 
 	pub fn xcb_warp_pointer(
         c: *mut xcb_connection_t,
@@ -126,7 +129,7 @@ extern "C"
 		c: *mut xcb_connection_t,
 		cookie: xcb_query_pointer_cookie_t,
 		e: *mut *mut xcb_generic_error_t,
-	) -> *mut xcb_query_pointer_reply_t;
+	) -> XCBWrapper<xcb_query_pointer_reply_t>;
 
 	pub fn xcb_open_font_checked(
         c: *mut xcb_connection_t,

@@ -12,7 +12,7 @@ pub unsafe fn get_atom<T: ToString>(conn: *mut xcb_connection_t, name: T) -> xcb
 	let reply = xcb_intern_atom_reply(conn, cookie, nullptr());
 
 	return 
-		match reply.as_mut()
+		match reply.0.as_mut()
 		{
 			Some(reply) => { reply.atom }
 			None => { XCB_NONE }
