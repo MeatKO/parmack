@@ -130,6 +130,25 @@ pub struct xcb_key_press_event_t_struct {
 }
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct xcb_button_press_event_t_struct {
+    pub response_type: u8,
+    pub detail: xcb_button_t,
+    pub sequence: u16,
+    pub time: xcb_timestamp_t,
+    pub root: xcb_window_t,
+    pub event: xcb_window_t,
+    pub child: xcb_window_t,
+    pub root_x: i16,
+    pub root_y: i16,
+    pub event_x: i16,
+    pub event_y: i16,
+    pub state: u16,
+    pub same_screen: u8,
+    pub pad0: u8,
+}
+
+#[repr(C)]
 #[derive(Copy, Clone)]
 pub struct xcb_client_message_event_t_struct {
     pub response_type: u8,

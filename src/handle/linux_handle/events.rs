@@ -19,13 +19,23 @@ impl LinuxHandle
 			{
 				XCB_KEY_RELEASE =>
 				{
-					let key_code = *(event as *mut xcb_key_press_event_t);
+					let key_code = *(event as *mut xcb_key_release_event_t);
 					return WindowEvent::KeyRelease(convert_key_code(key_code.detail))
 				}
 				XCB_KEY_PRESS => 
 				{
 					let key_code = *(event as *mut xcb_key_press_event_t);
 					return WindowEvent::KeyPress(convert_key_code(key_code.detail))
+				}
+				XCB_BUTTON_PRESS =>
+				{
+					let button_event = *(event as *mut xcb_button_press_event_t);
+					return WindowEvent::MousePress(convert_mouse_code(button_event.detail), button_event.event_x as i32, button_event.event_y as i32)
+				}
+				XCB_BUTTON_RELEASE =>
+				{
+					let button_event = *(event as *mut xcb_button_release_event_t);
+					return WindowEvent::MouseRelease(convert_mouse_code(button_event.detail), button_event.event_x as i32, button_event.event_y as i32)
 				}
 				XCB_CLIENT_MESSAGE =>
 				{
