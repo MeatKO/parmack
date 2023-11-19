@@ -24,13 +24,17 @@ pub enum WindowActions
 	Configure{ width: i32, height: i32 },
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 #[repr(u32)]
 pub enum MouseCode
 {
 	Left,
 	Right,
 	Middle,
+	ScrollUp,
+	ScrollDown,
+	SideBack,
+	SideFront,
 	Unknown,
 }
 

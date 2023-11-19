@@ -91,6 +91,10 @@ pub fn convert_mouse_code(mouse_code: u8) -> MouseCode
 		1 => MouseCode::Left,
         2 => MouseCode::Middle,
         3 => MouseCode::Right,
+        4 => MouseCode::ScrollUp,
+        5 => MouseCode::ScrollDown,
+        8 => MouseCode::SideBack,
+        9 => MouseCode::SideFront,
         _ => MouseCode::Unknown,
 	}
 }

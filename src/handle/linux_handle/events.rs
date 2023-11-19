@@ -30,11 +30,13 @@ impl LinuxHandle
 				XCB_BUTTON_PRESS =>
 				{
 					let button_event = *(event as *mut xcb_button_press_event_t);
+					// println!("pressed {}", button_event.detail);
 					return WindowEvent::MousePress(convert_mouse_code(button_event.detail), button_event.event_x as i32, button_event.event_y as i32)
 				}
 				XCB_BUTTON_RELEASE =>
 				{
 					let button_event = *(event as *mut xcb_button_release_event_t);
+					// println!("released {}", button_event.detail);
 					return WindowEvent::MouseRelease(convert_mouse_code(button_event.detail), button_event.event_x as i32, button_event.event_y as i32)
 				}
 				XCB_CLIENT_MESSAGE =>
